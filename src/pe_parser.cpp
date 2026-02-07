@@ -1,6 +1,5 @@
 #include "pe_parser.h"
 
-#include <limits>
 #include <stdexcept>
 #include <utility>
 
@@ -118,17 +117,14 @@ PeMetadata PeParser::Parse() const {
   size_t section_table_offset =
       optional_header_offset + file_header.size_of_optional_header;
   constexpr size_t kSectionSize = 40;
-  if (file_header.number_of_sections >
-      std::numeric_limits<size_t>::max() / kSectionSize) {
-    throw std::runtime_error("Section table size overflows address space.");
-  }
-  size_t section_table_size =
-      static_cast<size_t>(file_header.number_of_sections) * kSectionSize;
+  const size_t section_count =
+      static_cast<size_t>(file_header.number_of_sections);
+  const size_t section_table_size = section_count * kSectionSize;
   EnsureBounds(section_table_offset, section_table_size);
 
   std::vector<SectionHeader> sections;
-  sections.reserve(file_header.number_of_sections);
-  for (size_t i = 0; i < file_header.number_of_sections; ++i) {
+  sections.reserve(section_count);
+  for (size_t i = 0; i < section_count; ++i) {
     size_t section_offset = section_table_offset + i * kSectionSize;
     SectionHeader section;
     section.name = ReadString(section_offset, 8);
