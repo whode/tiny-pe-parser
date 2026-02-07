@@ -8,6 +8,7 @@ Focused on clear output and careful, bounds-checked parsing.
 - **Std-lib only**: No external dependencies.
 - **Safe parsing**: Strict bounds checks for all reads.
 - **Architecture aware**: Supports PE32 (x86) and PE32+ (x64).
+- **Resource bounded**: Rejects files larger than 64 MiB.
 - **Cross-platform build**: CMake project for MSVC/GCC/Clang.
 
 ## Build
@@ -34,7 +35,8 @@ The executable `tiny-pe-parser` (or `tiny-pe-parser.exe`) will be generated in t
 
 ## Usage
 
-Pass the path to any Windows executable (`.exe`) or library (`.dll`) as an argument.
+Pass the path to a Windows executable (`.exe`) or library (`.dll`) as an argument.
+Input files larger than 64 MiB are rejected by design.
 
 On Linux:
 ```bash
