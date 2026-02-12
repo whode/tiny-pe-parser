@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(tiny-pe-parser LANGUAGES CXX)
+project(tiny-pe-parser VERSION 1.0.0 LANGUAGES CXX)
 
 add_executable(tiny-pe-parser
     src/main.cpp
