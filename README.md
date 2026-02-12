@@ -1,5 +1,9 @@
 # Tiny PE Parser
 
+[![version](https://img.shields.io/github/v/tag/whode/tiny-pe-parser?label=version&sort=semver)](https://github.com/whode/tiny-pe-parser/tags)
+[![Workflow Status](https://img.shields.io/github/actions/workflow/status/whode/tiny-pe-parser/ci.yml?branch=main)](https://github.com/whode/tiny-pe-parser/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/whode/tiny-pe-parser)](LICENSE)
+
 A lightweight C++17 utility for analyzing Windows Portable Executable (PE) headers with no third-party libraries.
 Focused on clear output and careful, bounds-checked parsing.
 
