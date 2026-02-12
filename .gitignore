@@ -31,3 +31,6 @@ Makefile
 # Local editor settings
 .idea/
 .vscode/
+
+# Fixtures
+!fixtures/*
