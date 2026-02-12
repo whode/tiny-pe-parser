@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push: 
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-smoke:
+    name: Build and smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Show CMake version
+        run: cmake --version
+
+      - name: Configure
+        run: >
+          cmake -S . -B build
+          -D CMAKE_BUILD_TYPE=Release
+          -D CMAKE_RUNTIME_OUTPUT_DIRECTORY=${{ github.workspace }}/build/bin
+          -D CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE=${{ github.workspace }}/build/bin
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Smoke run (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          ./build/bin/tiny-pe-parser ./fixtures/sample_pe64.exe > /tmp/tiny-pe-parser-smoke.txt 2>&1
+          grep -q "File Header:" /tmp/tiny-pe-parser-smoke.txt
+          grep -q "Sections:" /tmp/tiny-pe-parser-smoke.txt
+
+      - name: Smoke run (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $log = Join-Path $env:RUNNER_TEMP "tiny-pe-parser-smoke.txt"
+          & "$env:GITHUB_WORKSPACE\build\bin\tiny-pe-parser.exe" "$env:GITHUB_WORKSPACE\fixtures\sample_pe64.exe" *> $log
+
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "Expected exit code 0 when running with sample PE, got $LASTEXITCODE"
+            exit 1
+          }
+
+          $content = Get-Content $log -Raw
+          if ($content -notmatch "File Header:") {
+            Write-Error "Expected parser output header not found."
+            exit 1
+          }
